@@ -38,9 +38,9 @@ void main(void)
     while(1)
     {
         /* LED blink */
-        PORTBbits.RB4 = 1;  // LED on
+        PORTBbits.RB3 = 1;  // LED on
         __delay_ms(1000);   // 1sec
-        PORTBbits.RB4 = 0;  // LED off
+        PORTBbits.RB3 = 0;  // LED off
         __delay_ms(1000);   // 1sec
     }
 
