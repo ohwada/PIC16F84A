@@ -2,7 +2,7 @@ PIC16F84A slot
 ===============
 
 PIC16F84A, and Seven-segments LED, electromagnetic Buzzer, Tact switch <br>
-<img src="https://raw.githubusercontent.com/ohwada/PIC16F84A/master/docs/slot/pcb_front.png" width="200" />
+<img src="https://raw.githubusercontent.com/ohwada/PIC16F84A/master/docs/slot/pcb_front.png" width="400" />
 
 ### todo1
 Top wire, and the resistance, have the same hole. <br>
