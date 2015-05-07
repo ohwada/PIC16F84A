@@ -7,7 +7,7 @@ Top wire, and the resistance, have the same hole. <br>
 
 ### todo2
 Battery box and PIcKit3 are colliding. <br>
-<img src="https://raw.githubusercontent.com/ohwada/PIC16F84A/master/docs/slot/todo1.png" width="200" />
+<img src="https://raw.githubusercontent.com/ohwada/PIC16F84A/master/docs/slot/todo2.png" width="200" />
 
 ### todo3
 Power switch. <br>
