@@ -22,12 +22,10 @@ http://android.ohwada.jp/archives/5864
 ## Code
 #### 7 Seg LED
 https://github.com/ohwada/PIC16F84A/tree/master/code/7seg <br>
-
-Blog (in Japanese)
-http://android.ohwada.jp/archives/5973
+Blog (in Japanese) <br>
+http://android.ohwada.jp/archives/5973 <br>
 
 #### Slot Game
 https://github.com/ohwada/PIC16F84A/tree/master/code/slot <br>
-
-Blog (in Japanese)
-http://android.ohwada.jp/archives/5978
+Blog (in Japanese) <br>
+http://android.ohwada.jp/archives/5978 <br>

@@ -16,20 +16,17 @@ http://android.ohwada.jp/archives/5849
 #### Timer
 blink LED with timer interrupt <br>
 https://github.com/ohwada/PIC16F84A/tree/master/code/timer <br>
-
-Blog (in Japanese)
-http://android.ohwada.jp/archives/5949
+Blog (in Japanese) <br>
+http://android.ohwada.jp/archives/5949 <br>
 
 #### Tone
 play Doe Ray Me with buzzer tone <br>
 https://github.com/ohwada/PIC16F84A/tree/master/code/tone <br>
-
-Blog (in Japanese)
-http://android.ohwada.jp/archives/5956
+Blog (in Japanese) <br>
+http://android.ohwada.jp/archives/5956 <br>
 
 #### Koinobori
 play Koinobori song with buzzer tone <br>
 https://github.com/ohwada/PIC16F84A/tree/master/code/koinobori <br>
-
-Blog (in Japanese)
-http://android.ohwada.jp/archives/5964
+Blog (in Japanese) <br>
+http://android.ohwada.jp/archives/5964 <br>
