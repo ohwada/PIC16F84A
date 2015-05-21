@@ -1,6 +1,6 @@
 /**
  * PIC16F84A
- * Koinobori - buzzer tone
+ * play Koinobori song with buzzer tone
  * 2015-05-03 K.OHWADA
  */
 
@@ -9,6 +9,7 @@
 /******************************************************************************/
 #include <xc.h>         /* XC8 General Include File */
 #include <pic16f84a.h>  /* PIC16F84A */ 
+#include <stdbool.h>    /* bool */
 
 /******************************************************************************/
 /* User Global Variable Declaration                                           */
@@ -40,7 +41,7 @@
 #define SO 97
 #define RA 114
 #define SI 129
-#define DO5 137
+#define DO5 136
 
 /**
  * PIC16F84A configuraton
@@ -52,81 +53,77 @@
 #pragma config WDTE = OFF, PWRTE = OFF, CP = OFF, FOSC = HS 
 
 /* Function Declaration */
-void tone( int tmr, int delay );
-void noTone(void);
+void tone( int tmr, int t1, int t2 );
+void noTone( int t );
 
 /* Constant */
 // koinobori
 const int SCORE[] = {
-MI,1, 
-RE,1, 
-DO4,2,
-RE,2,
-MI,2,
-RA,2,
-SO,2,
-MI,1,
-MI,1,
-MI,2,
-RE,1, 
-DO4,1,
-RE,4,
-0,0,
+MI,30,5, 
+RE,30,5, 
+DO4,60,5, 
+RE,60,5, 
+MI,60,5, 
+RA,60,5, 
+SO,60,5, 
+MI,30,5, 
+MI,30,5, 
+MI,60,5, 
+RE,30,5, 
+DO4,30,5, 
+RE,120,15,
 //
-DO4,1,
-RE,1,
-MI,2,
-SO,2,
-RA,1,
-RA,1, 
-SO,2,
-MI,2,
-SO,1,
-SO,1,
-MI,2, 
-RE,2,
-DO4,4,
-0,0,
+DO4,30,5, 
+RE,30,5, 
+MI,60,5,  
+SO,60,5, 
+RA,30,5, 
+RA,30,5, 
+SO,60,5, 
+MI,60,5, 
+SO,30,5, 
+SO,30,5, 
+MI,60,5,  
+RE,60,5, 
+DO4,120,15,
 //
-DO5,1,
-DO5,1,
-DO5,2,
-RA,2,
-SO,1,
-SO,1,
-SO,2,
-MI,2,
-RE,1,
-RE,1,
-RE,2, 
-DO4,1,
-MI,1, 
-SO,4,
-0,0,
+DO5,30,5, 
+DO5,30,5, 
+DO5,60,5, 
+RA,60,5, 
+SO,30,5, 
+SO,30,5, 
+SO,60,5, 
+MI,60,5, 
+RE,30,5, 
+RE,30,5, 
+RE,60,5,  
+DO4,30,5, 
+MI,30,5, 
+SO,120,15,
 //
-DO4,1,
-RE,1,
-MI,2,
-SO,2,
-DO5,2,
-RA,2, 
-SO,2,
-MI,1,
-MI,1,
-RE,2,
-MI,2,
-DO4,4,
-0,0,
+DO4,30,5, 
+RE,30,5, 
+MI,60,5, 
+SO,60,5, 
+DO5,60,5, 
+RA,60,5, 
+SO,60,5, 
+MI,30,5, 
+MI,30,5, 
+RE,60,5, 
+MI,60,5, 
+DO4,120,15
 };
 
 /* Gloval Variable */
 unsigned int tmr0_value = 0;    // TMR0 value
 unsigned int led_max = 0; // max of LED counter
 unsigned int led_counter = 0; // LED counter
-unsigned char is_timer_on = 0; // Timer status on / off
-unsigned char is_led_on = 0; // LED status on / off
-unsigned char is_buzzer_on = 0; // buzzer status on / off
-unsigned char is_tone_enable  = 0; // Timer enable flag
+bool is_timer_on = 0; // Timer status on / off
+bool is_led_on = 0; // LED status on / off
+bool is_buzzer_on = 0; // buzzer status on / off
+bool is_tone_enable  = 0; // Timer enable flag
 
 /**
  * main
@@ -149,79 +146,63 @@ int main(void) {
     INTCONbits.GIE = 1;
 
     // endless loop
-    int len = sizeof(SCORE) / ( 2 * sizeof(SCORE[0]) );
+    int len = sizeof(SCORE) / ( 3 * sizeof(SCORE[0]) );
     int i;
     while(1) {
         // play score
         for ( i=0; i<len; i++ ) {
-            tone( SCORE[ 2 * i ], SCORE[ 2 * i + 1 ] );
+            tone( SCORE[ 3 * i ], SCORE[ 3 * i + 1 ], SCORE[ 3 * i + 2 ] );
         }
         // pause 5 sec
-        noTone();
-        __delay_ms(5000);
+        noTone(500);
     }
 }
 
 /**
  * tone
  */
-void tone( int tmr, int delay ) {
-    if ( tmr > 0 ) {
-        // Timer 0
-        tmr0_value = tmr;
-        TMR0 = tmr;
-        is_tone_enable = 1;
-    } else {
-        // silent
-        is_tone_enable = 0;
-    }
+void tone( int tmr, int t1, int t2 ) {
+    // Timer 0
+    tmr0_value = tmr;
+    TMR0 = tmr;
     // Buzzer
-    PORTBbits.RB5 = 0;
-    is_buzzer_on = 0;
+    is_tone_enable = 1;
     // LED
     led_max = PRE_INTERVAL / ( 256 - tmr );
-    // delay
-    if ( delay == 0 ) {
-        __delay_ms(100);
-    } if ( delay == 2 ) {
-        __delay_ms(600);
-    } else if ( delay == 3 ) {
-        __delay_ms(900);
-    } else if ( delay == 4 ) {
-        __delay_ms(1200);
-    } else {
-        __delay_ms(300);
+    for( ; t1>0; t1-- ) {
+        __delay_ms(10);
     }
-    // pause for each one tone
-    noTone();
-    __delay_ms(50);
+    noTone( t2 );
 }
 
 /**
  * noTone
  */
-void noTone(void) {
-    PORTBbits.RB5 = 0;  // Buzzer
-    is_buzzer_on = 0;
+void noTone( int t ) {
     is_tone_enable = 0;
+    for( ; t>0; t-- ) {
+        __delay_ms(10);
+    }
 }
 
 /**
  * interrupt
  */
 static void interrupt isr(void) {
-/* 880 Hz @ TMR0_RA */
+/* 880 Hz @ RA */
     // TMR0 Overflow Interrupt Flag bit : overflowed ?
     if (INTCONbits.TMR0IF == 1) {
         INTCONbits.TMR0IF = 0; // clear flag
         TMR0 = tmr0_value;
         // Timer pin
         PORTBbits.RB3 = is_timer_on;  // Timer
-        is_timer_on = ( is_timer_on == 1 )? 0: 1;
+        is_timer_on = !is_timer_on;
         // Buzzer pin
         if ( is_tone_enable ) {
             PORTBbits.RB5 = is_buzzer_on;   // Buzzer
-            is_buzzer_on = ( is_buzzer_on == 1 )? 0: 1;
+            is_buzzer_on = !is_buzzer_on;
+        } else {
+            PORTBbits.RB5 = 0;  // Buzzer off
         }
         // LED pin
         led_counter++;
@@ -229,7 +210,7 @@ static void interrupt isr(void) {
         if ( led_counter >= led_max ) {
             led_counter = 0; // reset
             PORTBbits.RB4 = is_led_on;  // LED
-            is_led_on = ( is_led_on == 1 )? 0: 1;            
+            is_led_on = !is_led_on;        
         }
     }
 }

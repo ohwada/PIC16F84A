@@ -1,6 +1,6 @@
 /**
  * PIC16F84A
- * buzzer tone
+ * play Doe Ray Me with buzzer tone
  * 2015-05-03 K.OHWADA
  */
 
@@ -9,6 +9,7 @@
 /******************************************************************************/
 #include <xc.h>         /* XC8 General Include File */
 #include <pic16f84a.h>  /* PIC16F84A */ 
+#include <stdbool.h>    /* bool */
 
 /******************************************************************************/
 /* User Global Variable Declaration                                           */
@@ -33,14 +34,14 @@
 #define PRE_INTERVAL  125000
 
 /* Timer 0 */
-#define TMR0_DO4 17
-#define TMR0_RE 43
-#define TMR0_MI 67
-#define TMR0_FA 77
-#define TMR0_SO 97
-#define TMR0_RA 114
-#define TMR0_SI 129
-#define TMR0_DO5 137
+#define DO4 17
+#define RE 43
+#define MI 67
+#define FA 77
+#define SO 97
+#define RA 114
+#define SI 129
+#define DO5 136
 
 /**
  * PIC16F84A configuraton
@@ -52,17 +53,17 @@
 #pragma config WDTE = OFF, PWRTE = OFF, CP = OFF, FOSC = HS 
 
 /* Function Declaration */
-void tone( int tmr );
-void noTone(void);
+void tone( int tmr, int t1, int t2 );
+void noTone( int t );
 
 /* Gloval Variable */
 unsigned int tmr0_value = 0;    // TMR0 value
 unsigned int led_max = 0; // max of LED counter
 unsigned int led_counter = 0; // LED counter
-unsigned char is_timer_on = 0; // Timer status on / off
-unsigned char is_led_on = 0; // LED status on / off
-unsigned char is_buzzer_on = 0; // buzzer status on / off
-unsigned char is_tone_enable  = 0; // Timer enable flag
+bool is_timer_on = 0; // Timer status on / off
+bool is_led_on = 0; // LED status on / off
+bool is_buzzer_on = 0; // buzzer status on / off
+bool is_tone_enable  = 0; // Timer enable flag
 
 /**
  * main
@@ -77,75 +78,71 @@ int main(void) {
     // Option
     OPTION_REG = OPTION_REG_VALUE ;
     // Timer 0
-    tmr0_value = TMR0_RA ;
-    TMR0 = TMR0_RA ;
+    tmr0_value = RA ;
+    TMR0 = RA ;
     // TMR0 Overflow Interrupt Enable bit = Enables
     INTCONbits.TMR0IE = 1;
     // Global Interrupt Enable bit = Enables
     INTCONbits.GIE = 1;
 
     while(1) {
-        tone( TMR0_DO4 );
-        __delay_ms(1000);
-        tone( TMR0_RE );
-        __delay_ms(1000);
-        tone( TMR0_MI );
-        __delay_ms(1000);
-        tone( TMR0_FA );
-        __delay_ms(1000);
-        tone( TMR0_SO );
-        __delay_ms(1000);
-        tone( TMR0_RA );
-        __delay_ms(1000);
-        tone( TMR0_SI );
-        __delay_ms(1000);
-        tone( TMR0_DO5 );
-        __delay_ms(1000);
-        noTone();
-        __delay_ms(5000);
+        tone( DO4, 100, 100 );
+        tone( RE, 100, 100  );
+        tone( MI, 100, 100  );
+        tone( FA, 100, 100  );
+        tone( SO, 100, 100  );
+        tone( RA, 100, 100  );
+        tone( SI, 100, 100  );
+        tone( DO5, 100, 100 );
+        __delay_ms(5000);        
     }
 }
 
 /**
  * tone
  */
-void tone( int tmr ) {
+void tone( int tmr, int t1, int t2 ) {
     // Timer 0
     tmr0_value = tmr;
     TMR0 = tmr;
     // Buzzer
-    PORTBbits.RB5 = 0;
-    is_buzzer_on = 0;
     is_tone_enable = 1;
     // LED
     led_max = PRE_INTERVAL / ( 256 - tmr );
+    for( ; t1>0; t1-- ) {
+        __delay_ms(10);
+    }
+    noTone( t2 );
 }
 
 /**
  * noTone
  */
-void noTone(void) {
-    PORTBbits.RB5 = 0;  // Buzzer
-    is_buzzer_on = 0;
+void noTone( int t ) {
     is_tone_enable = 0;
+    for( ; t>0; t-- ) {
+        __delay_ms(10);
+    }
 }
 
 /**
  * interrupt
  */
 static void interrupt isr(void) {
-/* 880 Hz @ TMR0_RA */
+/* 880 Hz @ RA */
     // TMR0 Overflow Interrupt Flag bit : overflowed ?
     if (INTCONbits.TMR0IF == 1) {
         INTCONbits.TMR0IF = 0; // clear flag
         TMR0 = tmr0_value;
         // Timer pin
         PORTBbits.RB3 = is_timer_on;  // Timer
-        is_timer_on = ( is_timer_on == 1 )? 0: 1;
+        is_timer_on = !is_timer_on;
         // Buzzer pin
         if ( is_tone_enable ) {
             PORTBbits.RB5 = is_buzzer_on;  // Buzzer
-            is_buzzer_on = ( is_buzzer_on == 1 )? 0: 1;
+            is_buzzer_on = !is_buzzer_on;
+        } else {
+            PORTBbits.RB5 = 0;  // Buzzer off
         }
         // LED pin
         led_counter++;
@@ -153,7 +150,7 @@ static void interrupt isr(void) {
         if ( led_counter >= led_max ) {
             led_counter = 0; // reset
             PORTBbits.RB4 = is_led_on;  // LED
-            is_led_on = ( is_led_on == 1 )? 0: 1;            
+            is_led_on = !is_led_on;            
         }
     }
 }

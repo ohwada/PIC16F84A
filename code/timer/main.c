@@ -1,6 +1,6 @@
 /**
  * PIC16F84A
- * LED Blink with timer interupt
+ * blink LED with timer interrupt
  * 2015-05-03 K.OHWADA
  */
 
@@ -9,6 +9,7 @@
 /******************************************************************************/
 #include <xc.h>         /* XC8 General Include File */
 #include <pic16f84a.h>  /* PIC16F84A */ 
+#include <stdbool.h>    /* bool */
 
 /******************************************************************************/
 /* User Global Variable Declaration                                           */
@@ -27,10 +28,10 @@
  *      000 1/2,   001 1/4,    010 1/8,     011 1/16
  *      100 1/32, 101  1/64, 110 1/128, 111  1/256
  */
-#define OPTION_REG_VALUE  0x07
+#define OPTION_REG_VALUE  0x07  // 1/256
 
 /* Timer 0 */
-#define TMR0_VALUE 0    // 256
+#define TMR0_VALUE 0    // 1/256
 
 // _XTAL_FREQ / ( 4 * 256 * 256 ) = 61.035 Hz ( 16.38 ms )
 #define TMR0_INTERVAL 61
@@ -47,8 +48,8 @@
 /* Gloval Variable */
 unsigned int led_max = TMR0_INTERVAL; // max of LED counter
 unsigned int led_counter = 0; // LED counter
-unsigned char is_led_on = 0; // LED status on / off
-unsigned char is_timer_on = 0; // Timer status on / off
+bool is_led_on = 0; // LED status on / off
+bool is_timer_on = 0; // Timer status on / off
 
 /**
  * main
@@ -86,13 +87,13 @@ static void interrupt isr(void) {
         TMR0 = TMR0_VALUE;
         // Timer pin 30.5 Hz
         PORTBbits.RB3 = is_timer_on;  // Timer
-        is_timer_on = ( is_timer_on == 1 )? 0: 1;
+        is_timer_on = !is_timer_on;  // bit invert
         // LED pin 1sec
         led_counter++;
         if ( led_counter >= led_max ) {
             led_counter = 0; // reset
             PORTBbits.RB4 = is_led_on;  // LED
-            is_led_on = ( is_led_on == 1 )? 0: 1;
+            is_led_on = !is_led_on;  // bit invert
         }
     }
 }
