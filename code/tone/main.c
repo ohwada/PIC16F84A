@@ -12,6 +12,17 @@
 #include <stdbool.h>    /* bool */
 
 /******************************************************************************/
+/* CPU Configuraton                                          */
+/******************************************************************************/
+/**
+ * Oscillator Selection bits: HS oscillator
+ * Watchdog Timer: WDT disabled
+ * Power-up Timer Enable bit: Power-up Timer is eabled
+ * Code Protection bit: Code protection disabled
+ */
+#pragma config FOSC = HS, WDTE = OFF, PWRTE = ON, CP = OFF 
+
+/******************************************************************************/
 /* User Global Variable Declaration                                           */
 /******************************************************************************/
 /* frequency of XTAL */
@@ -42,15 +53,6 @@
 #define RA 114
 #define SI 129
 #define DO5 136
-
-/**
- * PIC16F84A configuraton
- * Watchdog Timer: WDT disabled
- * Power-up Timer Enable bit: Power-up Timer is disabled
- * Code Protection bit: Code protection disabled
- * Oscillator Selection bits: HS oscillator
- */
-#pragma config WDTE = OFF, PWRTE = OFF, CP = OFF, FOSC = HS 
 
 /* Function Declaration */
 void tone( int tmr, int t1, int t2 );

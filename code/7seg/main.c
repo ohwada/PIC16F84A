@@ -26,18 +26,20 @@
 #include <pic16f84a.h>  /* PIC16F84A */ 
 
 /******************************************************************************/
+/* CPU Configuraton                                          */
+/******************************************************************************/
+/**
+ * Oscillator Selection bits: HS oscillator
+ * Watchdog Timer: WDT disabled
+ * Power-up Timer Enable bit: Power-up Timer is eabled
+ * Code Protection bit: Code protection disabled
+ */
+#pragma config FOSC = HS, WDTE = OFF, PWRTE = ON, CP = OFF 
+
+/******************************************************************************/
 /* User Global Variable Declaration                                           */
 /******************************************************************************/
 #define _XTAL_FREQ 4000000     // 4MHz
-
-/**
- * PIC16F84A configuraton
- * Watchdog Timer: WDT disabled
- * Power-up Timer Enable bit: Power-up Timer is disabled
- * Code Protection bit: Code protection disabled
- * Oscillator Selection bits: HS oscillator
- */
-#pragma config WDTE = OFF, PWRTE = OFF, CP = OFF, FOSC = HS 
 
 /* Function Declaration */
 void display( int row );

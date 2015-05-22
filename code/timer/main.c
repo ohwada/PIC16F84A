@@ -12,6 +12,17 @@
 #include <stdbool.h>    /* bool */
 
 /******************************************************************************/
+/* CPU Configuraton                                          */
+/******************************************************************************/
+/**
+ * Oscillator Selection bits: HS oscillator
+ * Watchdog Timer: WDT disabled
+ * Power-up Timer Enable bit: Power-up Timer is eabled
+ * Code Protection bit: Code protection disabled
+ */
+#pragma config FOSC = HS, WDTE = OFF, PWRTE = ON, CP = OFF 
+
+/******************************************************************************/
 /* User Global Variable Declaration                                           */
 /******************************************************************************/
 /* frequency of XTAL */
@@ -35,15 +46,6 @@
 
 // _XTAL_FREQ / ( 4 * 256 * 256 ) = 61.035 Hz ( 16.38 ms )
 #define TMR0_INTERVAL 61
-
-/**
- * PIC16F84A configuraton
- * Watchdog Timer: WDT disabled
- * Power-up Timer Enable bit: Power-up Timer is disabled
- * Code Protection bit: Code protection disabled
- * Oscillator Selection bits: HS oscillator
- */
-#pragma config WDTE = OFF, PWRTE = OFF, CP = OFF, FOSC = HS 
 
 /* Gloval Variable */
 unsigned int led_max = TMR0_INTERVAL; // max of LED counter
